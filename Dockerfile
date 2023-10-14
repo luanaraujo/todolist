@@ -1,7 +1,7 @@
 
 
 # Estágio de construção
-FROM maven:3.0.11-openjdk-17 as builder
+FROM maven:3-openjdk-17 as builder
 
 # Configuração do ambiente e cópia do código-fonte
 WORKDIR /todolist

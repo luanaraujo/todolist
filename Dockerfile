@@ -5,7 +5,8 @@ RUN apt-get install openjdk-17-jdk -y
 
 COPY . .
 
-FROM openjdk:17-jdk-slim
+FROM openjdk:17-jdk-slim as runtime
+FROM maven:3-jdk-17 as builder
 
 RUN apt-get update
 RUN apt-get install maven -y

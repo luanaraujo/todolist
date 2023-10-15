@@ -30,5 +30,6 @@ Esse projeto foi desenvolvido com as seguintes tecnologias:
 - Spring Data JPA para manipulação e persistência de dados
 - Lombok
 - Banco de dados H2 em memória
+- Docker para fazer deploy no Render
 
 por Luan Araujo :wave:

@@ -11,6 +11,7 @@ import at.favre.lib.crypto.bcrypt.BCrypt;
 import br.com.luanaraujo.todolist.user.IUserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -25,44 +26,38 @@ public class FilterTaskAuth extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         var servletPath = request.getServletPath();
-        if (servletPath.startsWith("/tasks")) {
-
-            // Pegar o usuário e senha
+        System.out.println("PATH " + servletPath);
+        if (servletPath.startsWith("/tasks/")) {
+            // Pegar a autenticação (usuario e senha)
             var authorization = request.getHeader("Authorization");
 
             var authEncoded = authorization.substring("Basic".length()).trim();
 
-            byte[] authDecoded = Base64.getDecoder().decode(authEncoded);
+            byte[] authDecode = Base64.getDecoder().decode(authEncoded);
 
-            var authString = new String(authDecoded);
+            var authString = new String(authDecode);
 
-            System.out.println("Authorization: ");
-            System.out.println(authString);
-
-            String[] credentials = authString.split("");
+            // ["danieleleao", "12345"]
+            String[] credentials = authString.split(":");
             String username = credentials[0];
             String password = credentials[1];
-            System.out.println("Authorization");
-            System.out.println(username);
-            System.out.println(password);
 
-            // Validar o usuário
+            // Validar usuário
             var user = this.userRepository.findByUsername(username);
             if (user == null) {
-                response.sendError(401, "Usuário não encontrado");
+                response.sendError(401);
             } else {
-                // Validar a senha
+                // Validar senha
                 var passwordVerify = BCrypt.verifyer().verify(password.toCharArray(), user.getPassword());
                 if (passwordVerify.verified) {
-                    // Segue o processo
+                    // Segue viagem
                     request.setAttribute("idUser", user.getId());
                     filterChain.doFilter(request, response);
                 } else {
                     response.sendError(401);
-
                 }
-            }
 
+            }
         } else {
             filterChain.doFilter(request, response);
         }
